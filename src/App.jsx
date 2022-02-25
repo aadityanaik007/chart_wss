@@ -37,24 +37,36 @@ const App = () => {
   useEffect(() => {
     socket.onmessage = (data) => {
       data = JSON.parse(data.data).NetPosition
+      // console.log(data);
 
       if (data) {
-        // console.log(user_list);
 
         for (let i = 0; i < data.length; i++) {
           // console.log(data[i]);
           if (user_list.length === 0) {
-            console.log(data[i]['exchange']);
-            if (data[i]['exchange'] === "NSEFO" && data[i]['netlivemtmt'] !== NaN) {
+            // console.log(data[i]['exchange']);
+            if (data[i]['exchange'] === "NSEFO" && !isNaN(data[i]['netlivemtmt'])) {
               userData['userid'] = data[i]['userid']
-              userData['nseMtm'] += data[i]['netlivemtmt']
+              if(data[i]['opttype'] ==='CE'){
+                userData['nseMtmCE'] = data[i]['netlivemtmt']
+              }
+              if(data[i]['opttype'] ==='PE'){
+                userData['nseMtmPE'] = data[i]['netlivemtmt']
+              }
+              if(data[i]['securitytype'] ==='FUTIDX'){
+                userData['nseMtm'] = data[i]['netlivemtmt']
+              }
               userData['sgxMtm'] = 0
+              userData['TotalNseMtm'] = userData['nseMtmCE'] + userData['nseMtmPE'] + userData['nseMtm']
               // console.log('nseMtm', userData)
             }
-            else {
+
+            if (data[i]['exchange'] === "SGXFO" && !isNaN(data[i]['netlivemtmt']))  {
               userData['userid'] = data[i]['userid']
-              userData['sgxMtm'] += data[i]['netlivemtmt']
+              userData['sgxMtm'] = data[i]['netlivemtmt']
               userData['nseMtm'] = 0
+              userData['nseMtmCE'] = 0
+              userData['nseMtmPE'] = 0
               // console.log('sgxMtm===', userData)
 
             }
@@ -71,15 +83,13 @@ const App = () => {
               // console.log('include');
               for (let j = 0; j < userData_list.length; j++) {
                 if (userData_list[j]['userid'] === data[i]['userid']) {
-                  if (data[i]['exchange'] === "NSEFO" && data[i]['netlivemtmt'].isNa) {
-                    console.log("====",userData_list[j]);
+                  if (data[i]['exchange'] === "NSEFO" && !isNaN(data[i]['netlivemtmt'])) {
                     userData_list[j]['nseMtm'] += data[i]['netlivemtmt']
-                    console.log("bbbb",userData_list[j]);        
                   }
-                  else {
+                  if (data[i]['exchange'] === "SGXFO" && !isNaN(data[i]['netlivemtmt'])) {
                     userData_list[j]['sgxMtm'] += data[i]['netlivemtmt']
                   }
-                  // console.log(userData_list[j]);        
+                  console.log(userData_list[j]);        
                 }
               }
             }
@@ -87,15 +97,26 @@ const App = () => {
               // console.log('not include');
               userData = {}
               user_list.push(data[i]['userid']);
-              if (data[i]['exchange'] === "NSEFO" && data[i]['netlivemtmt'] !== NaN) {
+              if (data[i]['exchange'] === "NSEFO" && !isNaN(data[i]['netlivemtmt'])) {
                 userData['userid'] = data[i]['userid']
-                userData['nseMtm'] = data[i]['netlivemtmt']
+                if(data[i]['opttype'] ==='CE'){
+                  userData['nseMtmCE'] = data[i]['netlivemtmt']
+                }
+                if(data[i]['opttype'] ==='PE'){
+                  userData['nseMtmPE'] = data[i]['netlivemtmt']
+                }
+                if(data[i]['securitytype'] ==='FUTIDX'){
+                  userData['nseMtm'] = data[i]['netlivemtmt']
+                }
+                userData['TotalNseMtm'] = userData['nseMtmCE'] + userData['nseMtmPE'] + userData['nseMtm']
                 userData['sgxMtm'] = 0
               }
-              else {
+              if (data[i]['exchange'] === "SGXFO" && !isNaN(data[i]['netlivemtmt'])) {
                 userData['userid'] = data[i]['userid']
                 userData['sgxMtm'] = data[i]['netlivemtmt']
                 userData['nseMtm'] = 0
+                userData['nseMtmCE'] = 0
+                userData['nseMtmPE'] = 0
               }
               userData_list.push(userData);
             }

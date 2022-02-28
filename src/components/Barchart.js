@@ -15,10 +15,11 @@ import {
 
 
 export default function Example({data}) {
+ 
   return (
     <BarChart
-      width={500}
-      height={500}
+      width={1500}
+      height={450}
       data={data}
       margin={{
         top: 20,
@@ -28,13 +29,13 @@ export default function Example({data}) {
       }}
     >
       <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="name" />
+      <XAxis dataKey="userid" />
       <YAxis />
       <Tooltip />
       <Legend />
-      <Bar dataKey="pv" stackId="a" fill="#8884d8" />
-      <Bar dataKey="uv" stackId="a" fill="#82ca9d" />
-      <Bar dataKey="amt" stackId="a" fill="#82ca78" />
+      <Bar dataKey="NSEFOMTM" stackId="a" fill="#8884d8" />
+      <Bar dataKey="SGXFOMTM" stackId="a" fill="#82ca9d" />
+      <Bar dataKey="NETMTM" stackId="a" fill="#82ca78" />
     </BarChart>
   );
 }
